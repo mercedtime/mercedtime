@@ -10,8 +10,7 @@ services:
       POSTGRES_DB: mercedtime
     volumes:
       - ./api/db/sql:/docker-entrypoint-initdb.d:ro
-      - ./api/db/data:/data
-      # - ./data/pg_data:/var/lib/postgresql/data
+      - ./api/db/data:/data:ro
     restart: unless-stopped
     ports:
       - target: 5432
@@ -21,23 +20,19 @@ services:
 
   api:
     container_name: mercedtime-api
-    depends_on:
-      - db
     build:
       context: ./api
       dockerfile: Dockerfile
-    volumes:
-      - ./api:/app/api:ro
     environment:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_PORT: ${POSTGRES_PORT}
     command:
       - "wait-for" # wait for the database to start
-      - 'localhost:5432'
+      - 'localhost:25432'
       - "--"
-      - "/app/bin/api"
+      - "/app/bin/mt"
       - "--driver=postgres"
       - "--port=8080"
-      - "--pw=${POSTGRES_PASSWORD}"
       - '--name=mercedtime'
       - '--user=mt'
       - "--db-host=localhost"
@@ -50,16 +45,20 @@ services:
         published: 8080 # host
         protocol: tcp
         mode: host
+    depends_on:
+      - db
 
   # automatic webscraping and database updates
   cron:
-    container_name: mercedtime-autoupdate
+    container_name: mercedtime-cron
     build:
       context: ./api
       dockerfile: docker/Dockerfile.cron
     environment:
       MT_PW: ${POSTGRES_PASSWORD}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_PORT: 25432
     depends_on:
       - db
     network_mode: host
-
+    # command: ["true"] # disable
