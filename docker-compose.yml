@@ -62,3 +62,4 @@ services:
       - db
     network_mode: host
     # command: ["true"] # disable
+
