@@ -31,8 +31,7 @@ services:
       JWT_SECRET: ${JWT_SECRET}
     command:
       - "wait-for" # wait for the database to start
-      - "-t"
-      - "120"
+      - "--timeout=120"
       - "localhost:25432"
       - "--"
       - "/app/bin/mt"

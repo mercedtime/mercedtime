@@ -7,3 +7,6 @@
 [submodule "docs"]
 	path = docs
 	url = git@github.com:mercedtime/docs.git
+[submodule "frontend"]
+	path = frontend
+	url = git@github.com:mercedtime/frontend.git
