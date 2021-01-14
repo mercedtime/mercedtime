@@ -31,7 +31,7 @@ services:
       JWT_SECRET: ${JWT_SECRET}
     command:
       - "wait-for" # wait for the database to start
-      - "--timeout=120"
+      - "--timeout=300"
       - "localhost:25432"
       - "--"
       - "/app/bin/mt"
@@ -44,11 +44,6 @@ services:
     restart: unless-stopped
     # port mapping will be ignored if network_mode=="host"
     network_mode: host
-    #ports:
-    #  - target: 8080    # in container
-    #    published: 8080 # host
-    #    protocol: tcp
-    #    mode: host
     depends_on:
       - db
 
